@@ -1,0 +1,78 @@
+[DEVICE]
+Name=ATMEGA32
+Clock=8000000
+[MEMORY_MODEL]
+Value=-1
+[BUILD_TYPE]
+Value=0
+[BOOT_TYPE]
+Value=0
+[ACTIVE_TAB]
+Value=timeLib.c
+[USE_EEPROM]
+Value=0
+[USE_HEAP]
+Value=0
+[HEAP_SIZE]
+Value=2000
+[EEPROM_DEFINITION]
+Value=
+[FILES]
+Count=2
+File0=timeLib.c
+File1=ds1307.c
+[BINARIES]
+Count=0
+[IMAGES]
+Count=0
+ActiveImageIndex=-1
+[OPENED_FILES]
+Count=3
+File0=timeLib.c
+File1=ds1307.h
+File2=ds1307.c
+[EEPROM]
+Count=0
+[ACTIVE_COMMENTS_FILES]
+Count=1
+File0=DS1307_Datasheet.xml
+[OTHER_FILES]
+Count=1
+File0=ds1307.pdf
+[SEARCH_PATH]
+Count=6
+Path0=C:\C4W\Mikroelektronika\mikroC PRO for AVR\defs\
+Path1=C:\C4W\Mikroelektronika\mikroC PRO for AVR\uses\lte64kw\
+Path2=C:\Users\Richard\Documents\Projects\MikroC_Libs\trunk\DS1307_Lib\
+Path3=C:\Projects\MikroCLibs\DS1307Lib\
+Path4=C:\Projects\DS1307Lib\
+Path5=C:\C4W\Mikroelektronika\mikroC PRO for AVR\Packages\RTC\Uses\
+[HEADER_PATH]
+Count=3
+Path0=C:\Projects\DS1307Lib\
+Path1=C:\Projects\MikroCLibs\DS1307Lib\
+Path2=C:\Users\Richard\Documents\Projects\MikroC_Libs\trunk\DS1307_Lib\
+[HEADERS]
+Count=1
+File0=ds1307.h
+[PLDS]
+Count=0
+[Useses]
+Count=10
+File0=TWI
+File1=C_String
+File2=UART
+File3=C_Type
+File4=C_Stdlib
+File5=Time
+File6=Conversions
+File7=DS1307
+File8=Lcd
+File9=Lcd_Constants
+[EXPANDED NODES]
+Node1=Sources
+Node2=Header Files
+Node3=Active Comments Files
+Node4=Output Files
+Node5=Other Files
+Count=5
