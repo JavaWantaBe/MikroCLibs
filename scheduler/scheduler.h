@@ -1,23 +1,50 @@
 /**
  * @file scheduler.h
  *
- * @brief Simple Round Robin Task Scheduler
+ * @brief Simple round robin task scheduler
  *
- * @author Richard Lowe, 3/19/2013
+ * @author Richard Lowe
+ * @copyright AlphaLoewe
  *
+ * @date 08/11/2014
+ *
+ * @version .1 - Initial
+ *
+ * @details
+ *
+ * Status: <XX% completed.>
+ *
+ * @note
  * Test configuration:
  *   MCU:             %DEVICE%
  *   Dev.Board:       x
  *   Oscillator:      %DEVICE_CLOCK%
  *   Ext. Modules:    x
  *   SW:              %COMPILER%
- * NOTES:
  *
+ * \par
+ *   <all that matters>
  */
 
+
 /**
- * @code main.c
+ * @code
+ *  void main()
+ *  {
+ *      initTimer();
  *
+ *      task_scheduler_init( 1000 );
+ *      task_add( 0, task1, SCH_SECONDS_1 );
+ *      task_add( 1, task2, SCH_SECONDS_5 );
+ *
+ *      task_scheduler_start();
+ *
+ *      while(1)
+ *      {
+ *          task_dispatch();
+ *      }
+ *
+ *  #endcode
  *
  */
 
@@ -41,58 +68,66 @@
 #define SCH_HOURS_12    60*60*12
 #define SCH_DAY_1       60*60*24
 
-// a task "type"
-// pointer to a void function with no arguments
+/* pointer to a void function with no arguments */
 typedef void ( *task_t ) ( void );
 
+/**
+ * @enum Status of tasks in scheduler
+ *
+ */
 typedef enum
 {
-    TASK_RUNNABLE = 0,
-    TASK_RUNNING,
-    TASK_STOPPED,
-    TASK_ERROR
+    TASK_RUNNABLE = 0,      /**< Task is ready to be ran   */
+    TASK_RUNNING,           /**< Task is currently running */
+    TASK_STOPPED,           /**< Task is stopped           */
+    TASK_ERROR              /**< Error has occurred        */
 } task_status_e;
 
 
 /**
  *  @brief Initializes RR Scheduler
  *
- *  NOTES:
+ *  Initialization only requires a clock parameter.  Clock represents the
+ *  time that expires between calles to task_scheduler_clock().
+ *
+ *  @param uint16_t clock -
+ *
+ *  @code
+ *    task_scheduler_init( 1000 ); // 1000 ms between calls
+ *  @endcode
+ *
+ *  @note
  *   Sets all tasks to NULL
  */
-void task_scheduler_init ( uint16_t clock );
+void task_scheduler_init( uint16_t clock );
 
 /**
- *  @brief Function called by clock
+ *  @brief Function called by timer
  *
  *  @pre Clock needs to be initialized
  *
- *  @note
- *   <notes>
  */
-void task_scheduler_clock ( void );
+void task_scheduler_clock( void );
 
 /**
  *  @brief Adds a task to the scheduler
  *
  *  @pre Scheduler must be initialized first
  *
- *  @param unsigned char id - ID of task, must be unique
+ *  @param uint8_t id - ID of task, must be unique
  *  @param task_t task- Function that will be called when scheduler executes
- *  @param unsigned int period - how many nx100ms of delay the task requires
+ *  @param uint32_t period - how many nx100ms of delay the task requires
  *
  */
-void task_add ( uint8_t id, task_t task, uint32_t period );
+void task_add( uint8_t id, task_t task, uint32_t period );
 
 /**
  *  @brief Deletes task from scheduler
  *
- *  @pre Scheduler must be initialized first
- *
- *  @param unsigned char id - ID of task
+ *  @param uint8_t id - ID of task
  *
  */
-void task_delete ( uint8_t id );
+void task_delete( uint8_t id );
 
 /**
  *  @brief Get Task Status
@@ -107,31 +142,32 @@ void task_delete ( uint8_t id );
  *    @retval TASK_STOPPED
  *    @retval TASK_ERROR
  */
-task_status_e task_get_status ( uint8_t id );
+task_status_e task_get_status( uint8_t id );
 
 /**
  *  @brief Calls Ready Tasks
  *
  *  @pre Scheduler must be initialized first
  *
- *  NOTES:
- *   Needs to be called in loop
+ *  @note
+ *   Needs to be called in main while loop
  */
-void task_dispatch ( void );
+void task_dispatch( void );
 
 /**
  *  @brief Starts the task scheduler
  *
- *  \note
- *   <notes>
+ *  @note
+ *       At system initialization, tasks are undesirable to be running.
+ *       Scheduler will not run until this function is called.
  */
 void task_scheduler_start ( void );
 
 /**
  *  @brief Stops the task scheduler
  *
- *  \note
- *   <notes>
+ *  @note
+ *
  */
 void task_scheduler_stop ( void );
 

@@ -4,24 +4,27 @@
 // basic task control block (TCB)
 typedef struct
 {
-    uint8_t   id;                 // task ID
-    task_t    task;                // pointer to the task
+    uint8_t   id;                // task ID
+    task_t    task;              // pointer to the task
     uint32_t  delay;             // delay before execution
     uint32_t  period;
-    task_status_e task_status;  // status of task
+    task_status_e task_status;   // status of task
 } task_control_block_t;
 
-
+// Array of tasks
 static task_control_block_t task_list[MAX_TASKS];
+// counter in clock
 static volatile uint16_t count;
+// used to calculate delay based on user input
 static uint16_t count_per_second;
+// flag for enabling / disabling scheduler
 static volatile uint8_t task_scheduler_running;
 
 
 // initialises the task list
 void task_scheduler_init( uint16_t clock )
 {
-    int i;
+    int i = 0;
 
     task_scheduler_running = 0;
 
@@ -44,12 +47,7 @@ void task_scheduler_init( uint16_t clock )
     }
 }
 
-/*!
- *  \brief Clock runs through the tasks and decrement the period
- *
- *  \note
- *   <notes>
- */
+// clock
 void task_scheduler_clock()
 {
     if( task_scheduler_running == 1 )
@@ -58,7 +56,7 @@ void task_scheduler_clock()
 
         if( count >= count_per_second )
         {
-            int i;
+            int i = 0;
             count = 0;
 
             // cycle through available tasks

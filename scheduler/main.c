@@ -1,7 +1,7 @@
 /**
- * @file
+ * @file main.c
  *
- * @brief <Brief Description>
+ * @brief Test for scheduler
  *
  * @author Richard Lowe
  * @copyright AlphaLoewe
@@ -14,7 +14,7 @@
  *
  * Status: <XX% completed.>
  *
- * \note
+ * @note
  * Test configuration:
  *   MCU:             %DEVICE%
  *   Dev.Board:       x
@@ -36,15 +36,17 @@ void task2( void );
 void main()
 {
     initTimer();
-#ifdef __MIKROC_PRO_FOR_AVR__
+    
+    #ifdef __MIKROC_PRO_FOR_AVR__
     asm sei;
     UART1_Init(38400);
-#endif
-#ifdef __MIKROC_PRO_FOR_ARM__
+    #endif
+    
+    #ifdef __MIKROC_PRO_FOR_ARM__
     UART1_Init_Advanced( 119200, _UART_8_BIT_DATA, _UART_NOPARITY, _UART_ONE_STOPBIT, &_GPIO_MODULE_USART1_PA9_10 );
     Delay_ms( 100 );
     EnableInterrupts();
-#endif
+    #endif
 
     UART1_Write_Text("System Startup\n");
     
@@ -75,14 +77,15 @@ void task2()
 
 void initTimer()
 {
-#ifdef __MIKROC_PRO_FOR_AVR__
+    #ifdef __MIKROC_PRO_FOR_AVR__
     TCCR1A = 0x80;
     TCCR1B = 0x0C;
     OCR1AH = 0x7A;
     OCR1AL = 0x12;
     OCIE1A_bit = 1;
-#endif
-#ifdef __MIKROC_PRO_FOR_ARM__
+    #endif
+
+    #ifdef __MIKROC_PRO_FOR_ARM__
     RCC_APB1ENR.TIM2EN = 1;
     TIM2_CR1.CEN = 0;
     TIM2_PSC = 2399;
@@ -90,7 +93,7 @@ void initTimer()
     NVIC_IntEnable(IVT_INT_TIM2);
     TIM2_DIER.UIE = 1;
     TIM2_CR1.CEN = 1;
-#endif
+    #endif
 }
 
 
@@ -99,6 +102,7 @@ void Timer1Overflow_ISR() org IVT_ADDR_TIMER1_COMPA {
     task_scheduler_clock();
 }
 #endif
+
 #ifdef __MIKROC_PRO_FOR_ARM__
 void Timer2_interrupt() iv IVT_INT_TIM2 {
     TIM2_SR.UIF = 0;
