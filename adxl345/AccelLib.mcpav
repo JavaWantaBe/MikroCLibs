@@ -38,22 +38,27 @@ Count=0
 [OTHER_FILES]
 Count=0
 [SEARCH_PATH]
-Count=3
+Count=4
 Path0=C:\Mikroelektronika\mikroC PRO for AVR\defs\
 Path1=C:\Mikroelektronika\mikroC PRO for AVR\uses\lte64kw\
-Path2=Y:\Temp\ADXL345\
+Path2=Y:\git\MikroCLibs\adxl345\
+Path3=Y:\Temp\ADXL345\
 [HEADER_PATH]
-Count=1
+Count=2
 Path0=Y:\Temp\ADXL345\
+Path1=Y:\git\MikroCLibs\adxl345\
 [HEADERS]
 Count=1
 File0=adxl345.h
 [PLDS]
 Count=0
 [Useses]
-Count=2
+Count=5
 File0=TWI
 File1=C_Math
+File2=Conversions
+File3=C_String
+File4=UART
 [EXPANDED NODES]
 Node1=Sources
 Node2=Header Files

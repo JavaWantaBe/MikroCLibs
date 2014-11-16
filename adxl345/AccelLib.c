@@ -4,9 +4,11 @@ void main()
 {
     int x, y, z;
     
+    UART1_Init( 9600 );
     TWI_Init( 100000 );
+    Delay_ms( 100 );
     
-    adxl345_init();
+    adxl345_init( UART_Write_Text );
     
     //set activity/ inactivity thresholds (0-255)
     adxl345_setActivityThreshold(75); //62.5mg per increment
@@ -52,10 +54,12 @@ void main()
     adxl345_setInterrupt( ADXL345_INT_FREE_FALL_BIT, 1);
     adxl345_setInterrupt( ADXL345_INT_ACTIVITY_BIT, 1);
     adxl345_setInterrupt( ADXL345_INT_INACTIVITY_BIT, 1);
+    
+    adxl345_printAllRegister();
 
     while( 1 )
     {
         //Boring accelerometer stuff
-	adxl345_readAccel( &x, &y, &z ); //read the accelerometer values and store them in variables x,y,z
+        adxl345_readAccel( &x, &y, &z ); //read the accelerometer values and store them in variables x,y,z
     }
 }

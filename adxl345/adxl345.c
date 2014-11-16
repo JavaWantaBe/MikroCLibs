@@ -3,9 +3,11 @@
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
-#define ADXL345_DEVICE (0x53)  // ADXL345 device address
+#define ADXL345_DEVICE_WRITE (0x3A)  // ADXL345 device address
+#define ADXL345_DEVICE_READ (0x3B)
 #define ADXL345_TO_READ (6)   // num of bytes we are going to read each time (two bytes for each axis)
-
+#define ACKNOWLEDGE 1
+#define NO_ACKNOWLEDGE 0
 
 //private:
 static void writeTo( char address, char val );
@@ -22,11 +24,13 @@ static bool status;        // set when error occurs
 static char error_code;    // Initial state
 static double gains[3];    // counts to Gs
 
+static void ( *printch )( char* s );
+
 // Writes val to address register on device
 static void writeTo(  char address,  char val )
 {
     TWI_Start();              // issue I2C start signal
-    TWI_Write( 0x3A );          // send byte via I2C  (device address + W)
+    TWI_Write( ADXL345_DEVICE_WRITE );          // send byte via I2C  (device address + W)
     TWI_Write( address );       // send byte (address of the location)
     TWI_Write( val );         // send data (data to be written)
     TWI_Stop();               // issue I2C stop signal
@@ -38,18 +42,18 @@ static void readFrom(  char address, int num,  char _buff[] )
     int i = 0;
     
     TWI_Start();              // issue I2C start signal
-    TWI_Write( 0x3A );        // send byte via I2C (device address + W)
+    TWI_Write( ADXL345_DEVICE_WRITE );        // send byte via I2C (device address + W)
     TWI_Write( address );     // send byte (data address)
 
     TWI_Start();              // issue I2C signal repeated start
-    TWI_Write( 0x3B );        // send byte (device address + R)
+    TWI_Write( ADXL345_DEVICE_READ );        // send byte (device address + R)
 
     while( i < num )
     {
         if( i == ( num - 1 ) )
-            _buff[i] = TWI_Read( 0 );
+            _buff[i] = TWI_Read( NO_ACKNOWLEDGE );
         else
-            _buff[i] = TWI_Read( 1 );
+            _buff[i] = TWI_Read( ACKNOWLEDGE );
         i++;
     }
     
@@ -91,11 +95,18 @@ static bool getRegisterBit( char regAdress, int bitPos )
 
 static void print_char( char val )
 {
-    int i = 0;
-    //Serial.print("B");
-    for( i = 7; i >= 0; i-- )
+    if( printch != 0 )
     {
-        //Serial.print(val >> i & 1, BIN);
+        int i = 0;
+        char txt[4] = {0};
+        
+        printch("B");
+        
+        for( i = 7; i >= 0; i-- )
+        {
+            ByteToStr( ( val >> i & 1 ), txt );
+            printch( txt );
+        }
     }
 }
 
@@ -103,7 +114,7 @@ static void print_char( char val )
 
 
 // Public
-void adxl345_init()
+void adxl345_init( void ( *printme )( char* s ) )
 {
     status = ADXL345_OK;
     error_code = ADXL345_NO_ERROR;
@@ -116,6 +127,9 @@ void adxl345_init()
     writeTo( ADXL345_POWER_CTL, 0 );
     writeTo( ADXL345_POWER_CTL, 16 );
     writeTo( ADXL345_POWER_CTL, 8 );
+    
+    if( printme != 0 )
+        printch = printme;
 }
 
 // Reads the acceleration into three variable x, y and z
@@ -732,19 +746,19 @@ void adxl345_setRangeSetting( int val )
         case 2:
             _s = 0b00000000;
             break;
-	case 4:
-	    _s = 0b00000001;
-	    break;
-	case 8:
-	    _s = 0b00000010;
-	    break;
-	case 16:
-	    _s = 0b00000011;
-	    break;
-	default:
+        case 4:
+            _s = 0b00000001;
+            break;
+        case 8:
+            _s = 0b00000010;
+            break;
+        case 16:
+            _s = 0b00000011;
+            break;
+        default:
             _s = 0b00000000;
     }
-	
+        
     readFrom( ADXL345_DATA_FORMAT, 1, &_b );
     _s |= ( _b & 0b11101100 );
     writeTo( ADXL345_DATA_FORMAT, _s );
@@ -830,21 +844,26 @@ void adxl345_setJustifyBit( bool justifyBit )
 // this can be used to manually to check the current configuration of the device
 void adxl345_printAllRegister()
 {
-    char _b = '\0';
-    int i = 0;
-    //Serial.print("0x00: ");
-    readFrom( 0x00, 1, &_b );
-    print_char(_b);
-    //Serial.println("");
-
-    for( i = 29; i <= 57; i++ ) 
+    if( printch != 0 )  
     {
-        //Serial.print("0x");
-        //Serial.print(i, HEX);
-        //Serial.print(": ");
-        readFrom(i, 1, &_b);
-        print_char(_b);
-        //Serial.println("");
+        char _b = '\0';
+        int i = 0;
+        char txt[4] = {0};
+        
+        printch( "0x00: " );
+        readFrom( 0x00, 1, &_b );
+        print_char( _b );
+        printch("");
+
+        for( i = 29; i <= 57; i++ )
+        {
+            printch("0x");
+            ByteToHex( i, txt );
+            printch( txt );
+            printch(": ");
+            readFrom(i, 1, &_b);
+            print_char( _b );
+            printch("");
+        }
     }
 }
-

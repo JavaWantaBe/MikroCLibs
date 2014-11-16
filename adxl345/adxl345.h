@@ -1,20 +1,39 @@
+/**
+ * @file adxl345.h
+ *
+ * @brief Accelerometer ADXL345 Driver
+ *
+ *  This drive was adapted from the arduino library for the same sensor.  It
+ *  supports both SPI and I2C bus communications as well as full featured
+ *  access to the registers.
+ *
+ * @author Richard Lowe
+ * @copyright AlphaLoewe
+ *
+ * @date 16/11/2014
+ *
+ * @version 1.0 - Initial
+ *
+ * @details
+ *
+ * Status: <XX% completed.>
+ *
+ * \note
+ * Test configuration:
+ *   MCU:             %DEVICE%
+ *   Dev.Board:       x
+ *   Oscillator:      %DEVICE_CLOCK%
+ *   Ext. Modules:    x
+ *   SW:              %COMPILER%
+ *
+ * \par
+ *   <all that matters>
+ */
+
 #ifndef ADXL345_H
 #define ADXL345_H
 
-/**************************************************************************
-*                                     *
-* ADXL345 Driver for Arduino                       *
-*                                     *
-***************************************************************************
-*                                     *
-* This program is free software; you can redistribute it and/or modify  *
-* it under the terms of the GNU License.                 *
-* This program is distributed in the hope that it will be useful,     *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of     *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the      *
-* GNU License V2 for more details.                    *
-*                                     *
-***************************************************************************/
+
 #include <stdbool.h>
 
 /* ------- Register names ------- */
@@ -62,7 +81,7 @@
 #define ADXL345_BW_3  0x6   // 0110
 
 
-/*
+/**
 Interrupt PINs
 INT1: 0
 INT2: 1
@@ -92,8 +111,6 @@ Interrupt bit position
 #define ADXL345_OVERRUNY  0x00
 
 
-
-
 #define ADXL345_OK  1        // no error
 #define ADXL345_ERROR 0      // indicates error is predent
 
@@ -102,8 +119,13 @@ Interrupt bit position
 #define ADXL345_BAD_ARG  2   // bad method argument
 
 
-// Public
-void adxl345_init( void );
+/**
+ *  @brief Initializes the Sensor
+ *
+ *  @pre TWI_Init needs to be called before.
+ */
+void adxl345_init( void ( *print )( char *s ) );
+
 void adxl345_readAccelxyz( int* xyx );
 void adxl345_readAccel( int* x, int* y, int* z );
 void adxl345_get_Gxyz( double *xyz );
