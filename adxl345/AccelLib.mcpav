@@ -8,7 +8,7 @@ Value=0
 [BOOT_TYPE]
 Value=1
 [ACTIVE_TAB]
-Value=AccelLib.c
+Value=adxl345.c
 [USE_EEPROM]
 Value=0
 [USE_HEAP]

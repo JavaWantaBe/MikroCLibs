@@ -648,7 +648,7 @@ bool adxl345_getInterruptMapping( uint8_t interruptBit )
 // eg: setInterruptMapping(ADXL345_INT_DOUBLE_TAP_BIT,ADXL345_INT2_PIN);
 void adxl345_setInterruptMapping( int interruptBit, int interruptPin )
 {
-    setRegisterBit( ADXL345_INT_MAP, (uint8_t)interruptBit, (uint8_t)interruptPin );
+    setRegisterBit( ADXL345_INT_MAP, (uint8_t)interruptBit, (bool)interruptPin );
 }
 
 bool adxl345_isInterruptEnabled( int interruptBit )
@@ -658,7 +658,7 @@ bool adxl345_isInterruptEnabled( int interruptBit )
 
 void adxl345_setInterrupt( int interruptBit, bool state )
 {
-    setRegisterBit( ADXL345_INT_ENABLE, (uint8_t)interruptBit, (uint8_t)state );
+    setRegisterBit( ADXL345_INT_ENABLE, (uint8_t)interruptBit, state );
 }
 
 
