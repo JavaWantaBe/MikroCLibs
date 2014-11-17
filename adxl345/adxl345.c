@@ -1,3 +1,4 @@
+
 #include "adxl345.h"
 #include <math.h>
 
@@ -6,28 +7,26 @@
 #define ADXL345_DEVICE_WRITE (0x3A)  // ADXL345 device address
 #define ADXL345_DEVICE_READ (0x3B)
 #define ADXL345_TO_READ (6)   // num of bytes we are going to read each time (two bytes for each axis)
+
 #define ACKNOWLEDGE 1
 #define NO_ACKNOWLEDGE 0
 
 //private:
-static void writeTo( char address, char val );
-static void readFrom( char address, int num, char buff[] );
-static void setRegisterBit( char regAdress, int bitPos, bool state );
-static bool getRegisterBit( char regAdress, int bitPos );
-static void print_char( char val );
+static void writeTo( uint8_t address, uint8_t val );
+static void readFrom( uint8_t address, int num, uint8_t buff[] );
+static void setRegisterBit( uint8_t regAdress, uint8_t bitPos, bool state );
+static bool getRegisterBit( uint8_t regAdress, uint8_t bitPos );
 
 // Variables
-static char _buff[6] ;  //6 chars buffer for saving data read from the device
+static uint8_t _buff[6] ;  //6 chars buffer for saving data read from the device
 static bool status;        // set when error occurs
 
 // see error code for details
-static char error_code;    // Initial state
-static double gains[3];    // counts to Gs
-
-static void ( *printch )( char* s );
+static int error_code;    // Initial state
+static double gains[3];       // counts to Gs
 
 // Writes val to address register on device
-static void writeTo(  char address,  char val )
+static void writeTo( uint8_t address,  uint8_t val )
 {
     TWI_Start();              // issue I2C start signal
     TWI_Write( ADXL345_DEVICE_WRITE );          // send byte via I2C  (device address + W)
@@ -37,7 +36,7 @@ static void writeTo(  char address,  char val )
 }
 
 // Reads num  chars starting from address register on device in to _buff array
-static void readFrom(  char address, int num,  char _buff[] )
+static void readFrom( uint8_t address, int num, uint8_t _buff[] )
 {
     int i = 0;
     
@@ -67,9 +66,9 @@ static void readFrom(  char address, int num,  char _buff[] )
     
 }
 
-static void setRegisterBit( char regAdress, int bitPos, bool state )
+static void setRegisterBit( uint8_t regAdress, uint8_t bitPos, bool state )
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
     
     readFrom( regAdress, 1, &_b );
 
@@ -85,36 +84,19 @@ static void setRegisterBit( char regAdress, int bitPos, bool state )
     writeTo( regAdress, _b );
 }
 
-static bool getRegisterBit( char regAdress, int bitPos )
+static bool getRegisterBit( uint8_t regAdress, uint8_t bitPos )
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
     
     readFrom( regAdress, 1, &_b );
     return ( ( _b >> bitPos ) & 1 );
-}
-
-static void print_char( char val )
-{
-    if( printch != 0 )
-    {
-        int i = 0;
-        char txt[4] = {0};
-        
-        printch("B");
-        
-        for( i = 7; i >= 0; i-- )
-        {
-            ByteToStr( ( val >> i & 1 ), txt );
-            printch( txt );
-        }
-    }
 }
 
 
 
 
 // Public
-void adxl345_init( void ( *printme )( char* s ) )
+void adxl345_init( )
 {
     status = ADXL345_OK;
     error_code = ADXL345_NO_ERROR;
@@ -127,9 +109,6 @@ void adxl345_init( void ( *printme )( char* s ) )
     writeTo( ADXL345_POWER_CTL, 0 );
     writeTo( ADXL345_POWER_CTL, 16 );
     writeTo( ADXL345_POWER_CTL, 8 );
-    
-    if( printme != 0 )
-        printch = printme;
 }
 
 // Reads the acceleration into three variable x, y and z
@@ -167,13 +146,9 @@ void adxl345_get_Gxyz( double *xyz )
 // it should be between 0 and 255
 // the scale factor is 62.5 mg/LSB
 // A value of 0 may result in undesirable behavior
-void adxl345_setTapThreshold(int tapThreshold )
+void adxl345_setTapThreshold( uint8_t tapThreshold )
 {
-    char _b = '\0';
-
-    tapThreshold = constrain( tapThreshold, 0, 255 );
-    _b = ( char )tapThreshold;
-    writeTo( ADXL345_THRESH_TAP, _b );
+    writeTo( ADXL345_THRESH_TAP, tapThreshold );
 }
 
 // Gets the THRESH_TAP  char value
@@ -181,16 +156,16 @@ void adxl345_setTapThreshold(int tapThreshold )
 // the scale factor is 62.5 mg/LSB
 int adxl345_getTapThreshold()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_THRESH_TAP, 1, &_b );
-    return ( int )_b;
+    return _b;
 }
 
 // set/get the gain for each axis in Gs / count
 void adxl345_setAxisGains( double *_gains )
 {
-    int i;
+    int i = 0;
 
     for ( i = 0; i < 3; i++ )
     {
@@ -199,9 +174,9 @@ void adxl345_setAxisGains( double *_gains )
 }
 
 
-void adxl345_getAxisGains( double *_gains )
+void adxl345_getAxisGains( double* _gains )
 {
-    int i;
+    int i = 0;
 
     for( i = 0; i < 3; i++ )
     {
@@ -215,15 +190,15 @@ void adxl345_getAxisGains( double *_gains )
 // OFSX, OFSY and OFSZ should be comprised between
 void adxl345_setAxisOffset( int x, int y, int z )
 {
-    writeTo( ADXL345_OFSX, ( char )x );
-    writeTo( ADXL345_OFSY, ( char )y );
-    writeTo( ADXL345_OFSZ, ( char )z );
+    writeTo( ADXL345_OFSX, ( uint8_t )x );
+    writeTo( ADXL345_OFSY, ( uint8_t )y );
+    writeTo( ADXL345_OFSZ, ( uint8_t )z );
 }
 
 // Gets the OFSX, OFSY and OFSZ  chars
 void adxl345_getAxisOffset( int* x, int* y, int*z )
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_OFSX, 1, &_b );
     *x = ( int )_b;
@@ -238,22 +213,18 @@ void adxl345_getAxisOffset( int* x, int* y, int*z )
 // that an event must be above THRESH_TAP threshold to qualify as a tap event
 // The scale factor is 625µs/LSB
 // A value of 0 disables the tap/double tap funcitons. Max value is 255.
-void adxl345_setTapDuration( int tapDuration )
+void adxl345_setTapDuration( uint8_t tapDuration )
 {
-    char _b = '\0';
-
-    tapDuration = constrain( tapDuration, 0, 255 );
-    _b = ( char )tapDuration;
-    writeTo( ADXL345_DUR, _b );
+    writeTo( ADXL345_DUR, tapDuration );
 }
 
 // Gets the DUR  char
-int adxl345_getTapDuration()
+uint8_t adxl345_getTapDuration()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_DUR, 1, &_b );
-    return ( int )_b;
+    return _b;
 }
 
 // Sets the latency (latent register) which contains an unsigned time value
@@ -261,41 +232,36 @@ int adxl345_getTapDuration()
 // of the time window, during which a possible second tap can be detected.
 // The scale factor is 1.25ms/LSB. A value of 0 disables the double tap function.
 // It accepts a maximum value of 255.
-void adxl345_setDoubleTapLatency( int doubleTapLatency )
+void adxl345_setDoubleTapLatency( uint8_t doubleTapLatency )
 {
-    char _b = ( char )doubleTapLatency;
-    writeTo( ADXL345_LATENT, _b );
+    writeTo( ADXL345_LATENT, doubleTapLatency );
 }
 
 // Gets the Latent value
 int adxl345_getDoubleTapLatency()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_LATENT, 1, &_b );
-    return ( int )_b;
+    return _b;
 }
 
 // Sets the Window register, which contains an unsigned time value representing
 // the amount of time after the expiration of the latency time (Latent register)
 // during which a second valud tap can begin. The scale factor is 1.25ms/LSB. A
 // value of 0 disables the double tap function. The maximum value is 255.
-void adxl345_setDoubleTapWindow( int doubleTapWindow )
+void adxl345_setDoubleTapWindow( uint8_t doubleTapWindow )
 {
-    char _b = '\0';
-
-    doubleTapWindow = constrain( doubleTapWindow, 0, 255 );
-    _b = ( char )doubleTapWindow;
-    writeTo( ADXL345_WINDOW, _b );
+    writeTo( ADXL345_WINDOW, doubleTapWindow );
 }
 
 // Gets the Window register
-int adxl345_getDoubleTapWindow()
+uint8_t adxl345_getDoubleTapWindow()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_WINDOW, 1, &_b );
-    return ( int )_b;
+    return _b;
 }
 
 // Sets the THRESH_ACT  char which holds the threshold value for detecting activity.
@@ -303,22 +269,18 @@ int adxl345_getDoubleTapWindow()
 // with the value is compared with the value in the THRESH_ACT register. The scale
 // factor is 62.5mg/LSB. A value of 0 may result in undesirable behavior if the
 // activity interrupt is enabled. The maximum value is 255.
-void adxl345_setActivityThreshold( int activityThreshold )
+void adxl345_setActivityThreshold( uint8_t activityThreshold )
 {
-    char _b = '\0';
-
-    activityThreshold = constrain( activityThreshold, 0, 255 );
-    _b = ( char )activityThreshold;
-    writeTo( ADXL345_THRESH_ACT, _b );
+    writeTo( ADXL345_THRESH_ACT, activityThreshold );
 }
 
 // Gets the THRESH_ACT  char
-int adxl345_getActivityThreshold()
+uint8_t adxl345_getActivityThreshold()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_THRESH_ACT, 1, &_b );
-    return ( int )_b;
+    return _b;
 }
 
 // Sets the THRESH_INACT  char which holds the threshold value for detecting inactivity.
@@ -326,44 +288,36 @@ int adxl345_getActivityThreshold()
 // with the value is compared with the value in the THRESH_INACT register. The scale
 // factor is 62.5mg/LSB. A value of 0 may result in undesirable behavior if the
 // inactivity interrupt is enabled. The maximum value is 255.
-void adxl345_setInactivityThreshold( int inactivityThreshold )
+void adxl345_setInactivityThreshold( uint8_t inactivityThreshold )
 {
-    char _b = '\0';
-
-    inactivityThreshold = constrain( inactivityThreshold, 0, 255 );
-    _b = ( char )inactivityThreshold;
-    writeTo( ADXL345_THRESH_INACT, _b );
+    writeTo( ADXL345_THRESH_INACT, inactivityThreshold );
 }
 
 // Gets the THRESH_INACT  char
-int adxl345_getInactivityThreshold()
+uint8_t adxl345_getInactivityThreshold()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_THRESH_INACT, 1, &_b );
-    return ( int )_b;
+    return _b;
 }
 
 // Sets the TIME_INACT register, which contains an unsigned time value representing the
 // amount of time that acceleration must be less thant the value in the THRESH_INACT
 // register for inactivity to be declared. The scale factor is 1sec/LSB. The value must
 // be between 0 and 255.
-void adxl345_setTimeInactivity( int timeInactivity )
+void adxl345_setTimeInactivity( uint8_t timeInactivity )
 {
-    char _b = '\0';
-
-    timeInactivity = constrain( timeInactivity, 0, 255 );
-    _b = ( char )timeInactivity;
-    writeTo( ADXL345_TIME_INACT, _b );
+    writeTo( ADXL345_TIME_INACT, timeInactivity );
 }
 
 // Gets the TIME_INACT register
 int adxl345_getTimeInactivity()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_TIME_INACT, 1, &_b );
-    return ( int )_b;
+    return _b;
 }
 
 // Sets the THRESH_FF register which holds the threshold value, in an unsigned format, for
@@ -371,44 +325,36 @@ int adxl345_getTimeInactivity()
 // compared whith the value in THRESH_FF to determine if a free-fall event occured. The
 // scale factor is 62.5mg/LSB. A value of 0 may result in undesirable behavior if the free-fall
 // interrupt is enabled. The maximum value is 255.
-void adxl345_setFreeFallThreshold( int freeFallThreshold )
+void adxl345_setFreeFallThreshold( uint8_t freeFallThreshold )
 {
-    char _b = '\0';
-
-    freeFallThreshold = constrain( freeFallThreshold, 0, 255 );
-    _b = ( char )freeFallThreshold;
-    writeTo( ADXL345_THRESH_FF, _b );
+    writeTo( ADXL345_THRESH_FF, freeFallThreshold );
 }
 
 // Gets the THRESH_FF register.
-int adxl345_getFreeFallThreshold()
+uint8_t adxl345_getFreeFallThreshold()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_THRESH_FF, 1, &_b );
-    return ( int )_b;
+    return _b;
 }
 
 // Sets the TIME_FF register, which holds an unsigned time value representing the minimum
 // time that the RSS value of all axes must be less than THRESH_FF to generate a free-fall
 // interrupt. The scale factor is 5ms/LSB. A value of 0 may result in undesirable behavior if
 // the free-fall interrupt is enabled. The maximum value is 255.
-void adxl345_setFreeFallDuration( int freeFallDuration )
+void adxl345_setFreeFallDuration( uint8_t freeFallDuration )
 {
-    char _b = '\0';
-
-    freeFallDuration = constrain( freeFallDuration, 0, 255 );
-    _b = ( char )freeFallDuration;
-    writeTo( ADXL345_TIME_FF, _b );
+    writeTo( ADXL345_TIME_FF, freeFallDuration );
 }
 
 // Gets the TIME_FF register.
-int adxl345_getFreeFallDuration()
+uint8_t adxl345_getFreeFallDuration()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_TIME_FF, 1, &_b );
-    return ( int )_b;
+    return _b;
 }
 
 
@@ -602,7 +548,7 @@ void adxl345_setLowPower( bool state )
 
 double adxl345_getRate()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
 
     readFrom( ADXL345_BW_RATE, 1, &_b );
     _b &= 0b00001111;
@@ -612,7 +558,7 @@ double adxl345_getRate()
 
 void adxl345_setRate( double rate )
 {
-    char _b = '\0', _s = '\0';
+    uint8_t _b = '\0', _s = '\0';
     int v = (int) (rate / 6.25);
     int r = 0;
 
@@ -624,12 +570,12 @@ void adxl345_setRate( double rate )
     if( r <= 9 )
     {
         readFrom( ADXL345_BW_RATE, 1, &_b );
-        _s = ( char) (r + 6) | (_b & 0b11110000);
+        _s = ( uint8_t ) (r + 6) | (_b & 0b11110000);
         writeTo( ADXL345_BW_RATE, _s );
     }
 }
 
-void adxl345_set_bw( char bw_code )
+void adxl345_set_bw( int bw_code )
 {
     if( ( bw_code < ADXL345_BW_3 ) || ( bw_code > ADXL345_BW_1600 ) )
     {
@@ -638,16 +584,16 @@ void adxl345_set_bw( char bw_code )
     }
     else
     {
-        writeTo( ADXL345_BW_RATE, bw_code );
+        writeTo( ADXL345_BW_RATE, (uint8_t)bw_code );
     }
 }
 
-char adxl345_get_bw_code()
+int adxl345_get_bw_code()
 {
-    char bw_code = '\0';
+    uint8_t bw_code = '\0';
 
     readFrom( ADXL345_BW_RATE, 1, &bw_code );
-    return bw_code;
+    return (int)bw_code;
 }
 
 
@@ -659,7 +605,7 @@ char adxl345_get_bw_code()
 
 //Used to check if action was triggered in interrupts
 //Example triggered(interrupts, ADXL345_SINGLE_TAP);
-bool adxl345_triggered( char interrupts, int mask )
+bool adxl345_triggered( int interrupts, int mask )
 {
     return ( ( interrupts >> mask ) & 1 );
 }
@@ -680,38 +626,39 @@ bool adxl345_triggered( char interrupts, int mask )
  ADXL345_OVERRUNY
  */
 
-char adxl345_getInterruptSource()
+int adxl345_getInterruptSource()
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
+
     readFrom( ADXL345_INT_SOURCE, 1, &_b );
-    return _b;
+    return ( int )_b;
 }
 
-bool adxl345_getInterruptSourceBit( char interruptBit )
+bool adxl345_getInterruptSourceBit( uint8_t interruptBit )
 {
     return getRegisterBit( ADXL345_INT_SOURCE, interruptBit );
 }
 
-bool adxl345_getInterruptMapping( char interruptBit )
+bool adxl345_getInterruptMapping( uint8_t interruptBit )
 {
     return getRegisterBit( ADXL345_INT_MAP, interruptBit );
 }
 
 // Set the mapping of an interrupt to pin1 or pin2
 // eg: setInterruptMapping(ADXL345_INT_DOUBLE_TAP_BIT,ADXL345_INT2_PIN);
-void adxl345_setInterruptMapping( char interruptBit, bool interruptPin )
+void adxl345_setInterruptMapping( int interruptBit, int interruptPin )
 {
-    setRegisterBit( ADXL345_INT_MAP, interruptBit, interruptPin );
+    setRegisterBit( ADXL345_INT_MAP, (uint8_t)interruptBit, (uint8_t)interruptPin );
 }
 
-bool adxl345_isInterruptEnabled( char interruptBit )
+bool adxl345_isInterruptEnabled( int interruptBit )
 {
-    return getRegisterBit( ADXL345_INT_ENABLE, interruptBit );
+    return getRegisterBit( ADXL345_INT_ENABLE, (uint8_t)interruptBit );
 }
 
-void adxl345_setInterrupt( char interruptBit, bool state )
+void adxl345_setInterrupt( int interruptBit, bool state )
 {
-    setRegisterBit( ADXL345_INT_ENABLE, interruptBit, state );
+    setRegisterBit( ADXL345_INT_ENABLE, (uint8_t)interruptBit, (uint8_t)state );
 }
 
 
@@ -727,9 +674,9 @@ void adxl345_setInterrupt( char interruptBit, bool state )
 
 // Gets the range setting and return it into rangeSetting
 // it can be 2, 4, 8 or 16
-void adxl345_getRangeSetting( char* rangeSetting )
+void adxl345_getRangeSetting( uint8_t* rangeSetting )
 {
-    char _b = '\0';
+    uint8_t _b = '\0';
     
     readFrom( ADXL345_DATA_FORMAT, 1, &_b );
     *rangeSetting = _b & 0b00000011;
@@ -738,8 +685,8 @@ void adxl345_getRangeSetting( char* rangeSetting )
 // Sets the range setting, possible values are: 2, 4, 8, 16
 void adxl345_setRangeSetting( int val )
 {
-    char _s = '\0';
-    char _b = '\0';
+    uint8_t _s = '\0';
+    uint8_t _b = '\0';
 
     switch ( val ) 
     {
@@ -834,36 +781,4 @@ bool adxl345_getJustifyBit()
 void adxl345_setJustifyBit( bool justifyBit )
 {
     setRegisterBit( ADXL345_DATA_FORMAT, 2, justifyBit );
-}
-
-
-
-
-
-// print all register value to the serial ouptut, which requires it to be setup
-// this can be used to manually to check the current configuration of the device
-void adxl345_printAllRegister()
-{
-    if( printch != 0 )  
-    {
-        char _b = '\0';
-        int i = 0;
-        char txt[4] = {0};
-        
-        printch( "0x00: " );
-        readFrom( 0x00, 1, &_b );
-        print_char( _b );
-        printch("");
-
-        for( i = 29; i <= 57; i++ )
-        {
-            printch("0x");
-            ByteToHex( i, txt );
-            printch( txt );
-            printch(": ");
-            readFrom(i, 1, &_b);
-            print_char( _b );
-            printch("");
-        }
-    }
 }
