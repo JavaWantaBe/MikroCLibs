@@ -42,7 +42,7 @@ typedef struct
     int16_t size;      /**< Size of stack, also used as top */
     int16_t max;      /**< Maximum size of stack */
     size_t data_size; /**< Size of data stored on each node of stack */
-    void* const buffer;     /**< Pointer to array used as buffer */
+    void* buffer;     /**< Pointer to array used as buffer */
 } sstack_t;
 
 #define sstack_size( stack )  ( ( *stack ).size + 1 )

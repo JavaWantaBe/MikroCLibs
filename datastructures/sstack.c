@@ -21,7 +21,8 @@ int sstack_pop( sstack_t* stack, void* payload )
     if( stack->size < 0 )
         return -1;
 
-    tmp += ( stack->size-- ) * stack->data_size;
+    tmp += stack->size * stack->data_size;
+    ( stack->size )--;
     memcpy( payload, tmp, stack->data_size );
 
     return 0;
@@ -34,7 +35,8 @@ int sstack_push( sstack_t* stack, void* payload )
     if( stack->size == stack->max )
         return -1;
 
-    tmp += ( ++stack->size ) * stack->data_size;
+    ++( stack->size );
+    tmp += stack->size * stack->data_size;
     memcpy( tmp, payload, stack->data_size );
 
     return 0;

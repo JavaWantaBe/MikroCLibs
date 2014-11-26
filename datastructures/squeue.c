@@ -9,7 +9,7 @@
 #include <string.h>
 
 
-int squeue_init( squeue_t* queue, uint8_t max, size_t data_size, void* const buffer )
+int squeue_init( squeue_t* queue, int16_t max, size_t data_size, void* buffer )
 {
     if( queue == NULL || max == 0 || data_size == 0 || buffer == NULL )
         return -1;
@@ -34,7 +34,7 @@ int squeue_dequeue( squeue_t* queue, void* payload )
 
     tmp += ( queue->read ) * queue->data_size;
     memcpy( payload, tmp, queue->data_size );
-    queue->size--;
+    ( queue->size )--;
 
     if( queue->read == queue->max )
         queue->read = queue->read % queue->max;

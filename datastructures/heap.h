@@ -34,18 +34,18 @@
 
 typedef struct
 {
-   void* const buffer;
    size_t data_size;
    int16_t last;
    int16_t max;
    int ( *compare ) ( void* const key, void* const key2 );
+   void* buffer;
 } heap_t;
 
 int heap_init( heap_t* heap,
                int16_t max,
                size_t data_size,
                int ( *compare )( void* const key, void* const key2 ),
-               void* const buffer );
+               void* buffer );
 
 int heap_insert(heap_t* heap, void* payload );
 

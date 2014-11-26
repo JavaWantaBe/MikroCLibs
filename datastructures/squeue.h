@@ -14,12 +14,12 @@
 
 typedef struct
 {
-        int8_t size;      /**< Size of queue, also used as top */
-        int8_t max;       /**< Maximum size of queue */
-        uint8_t read;     /**< Read index */
-        uint8_t write;    /**< Write index */
-        size_t data_size; /**< Size of data stored on each node of queue */
-        void* const buffer;     /**< Pointer to array used as buffer */
+    int16_t size;       /**< Size of queue, also used as top */
+    int16_t max;        /**< Maximum size of queue */
+    int16_t read;       /**< Read index */
+    int16_t write;      /**< Write index */
+    size_t data_size;   /**< Size of data stored on each node of queue */
+    void* buffer; /**< Pointer to array used as buffer */
 } squeue_t;
 
 
@@ -40,7 +40,7 @@ typedef struct
  *    @retval 0 OK
  *    @retval -1 error
  */
-int squeue_init( squeue_t* queue, uint8_t max, size_t data_size, void* const buffer );
+int squeue_init( squeue_t* queue, int16_t max, size_t data_size, void* buffer );
 
 /**
  *  @brief Pops value from queue
