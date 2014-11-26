@@ -39,10 +39,10 @@
  */
 typedef struct
 {
-    int8_t size;      /**< Size of stack, also used as top */
-    uint8_t max;      /**< Maximum size of stack */
+    int16_t size;      /**< Size of stack, also used as top */
+    int16_t max;      /**< Maximum size of stack */
     size_t data_size; /**< Size of data stored on each node of stack */
-    void* buffer;     /**< Pointer to array used as buffer */
+    void* const buffer;     /**< Pointer to array used as buffer */
 } sstack_t;
 
 #define sstack_size( stack )  ( ( *stack ).size + 1 )
@@ -62,7 +62,7 @@ typedef struct
  *    @retval 0 OK
  *    @retval -1 error
  */
-int sstack_init( sstack_t* stack, uint8_t max, size_t data_size, void* buffer );
+int sstack_init( sstack_t* stack, int16_t max, size_t data_size, void* buffer );
 
 /**
  *  @brief Pops value from stack

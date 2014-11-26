@@ -1,16 +1,20 @@
 #include "sstack.h"
 #include "squeue.h"
+#include "heap.h"
 #include <stdlib.h>
 #include <ctype.h>
 
-#define MAX 25
+#define MAX 26
 #define MIN 1
 
 void test_sstack( void );
 void test_squeue( void );
+void test_heap( void );
+int compare( void* const key, void* const key2 );
 
 sstack_t static_stack;
 squeue_t static_queue;
+heap_t my_heap;
 
 int s_array[MAX];
 int tmpnum;
@@ -124,4 +128,22 @@ void test_squeue()
             UART_Write_Text( "\r\n" );
         }
     }
+}
+
+void test_heap()
+{
+    if( heap_init( &my_heap, MAX, sizeof( int ), compare, s_array ) < 0 )
+    {
+        UART_Write_Text( "Something off with heap init\r\n" );
+        return;
+    }
+
+}
+
+int compare( void* const key, void* const key2 )
+{
+    if( *( int* )key > *( int* )key2 )
+        return 1;
+    else
+        return -1;
 }

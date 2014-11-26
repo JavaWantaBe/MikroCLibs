@@ -1,8 +1,8 @@
-/*
- * squeue.h
+/**
+ * @file squeue.h
  *
- *  Created on: Nov 25, 2014
- *      Author: richard
+ *  @dateCreated on: Nov 25, 2014
+ *  @author Richard Lowe
  */
 
 #ifndef SQUEUE_H_
@@ -14,12 +14,12 @@
 
 typedef struct
 {
-        int8_t size;     /**< Size of queue, also used as top */
-        int8_t max;      /**< Maximum size of queue */
-        uint8_t read;
-        uint8_t write;
+        int8_t size;      /**< Size of queue, also used as top */
+        int8_t max;       /**< Maximum size of queue */
+        uint8_t read;     /**< Read index */
+        uint8_t write;    /**< Write index */
         size_t data_size; /**< Size of data stored on each node of queue */
-        void* buffer;     /**< Pointer to array used as buffer */
+        void* const buffer;     /**< Pointer to array used as buffer */
 } squeue_t;
 
 
@@ -40,7 +40,7 @@ typedef struct
  *    @retval 0 OK
  *    @retval -1 error
  */
-int squeue_init( squeue_t* queue, uint8_t max, size_t data_size, void* buffer );
+int squeue_init( squeue_t* queue, uint8_t max, size_t data_size, void* const buffer );
 
 /**
  *  @brief Pops value from queue
