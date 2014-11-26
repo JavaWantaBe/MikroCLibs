@@ -46,6 +46,7 @@ typedef struct
 } sstack_t;
 
 #define sstack_size( stack )  ( ( *stack ).size + 1 )
+#define sstack_full( stack )  ( ( *stack ).size == ( *stack ).max )
 
 /**
  *  @brief <Basic Description>
