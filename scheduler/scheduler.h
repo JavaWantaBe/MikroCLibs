@@ -22,8 +22,6 @@
  *   Ext. Modules:    x
  *   SW:              %COMPILER%
  *
- * \par
- *   <all that matters>
  */
 
 
@@ -56,20 +54,20 @@
 // task states
 #define MAX_TASKS 7
 
-#define SCH_SECONDS_1   1
-#define SCH_SECONDS_5   5
-#define SCH_SECONDS_10  10
-#define SCH_SECONDS_15  15
-#define SCH_SECONDS_30  30
-#define SCH_MINUTES_1   60
-#define SCH_MINUTES_15  60*15
-#define SCH_MINUTES_30  60*30
-#define SCH_HOURS_1     60*60
-#define SCH_HOURS_12    60*60*12
-#define SCH_DAY_1       60*60*24
+#define SCH_SECONDS_1   1000
+#define SCH_SECONDS_5   5000
+#define SCH_SECONDS_10  10000
+#define SCH_SECONDS_15  15000
+#define SCH_SECONDS_30  30000
+#define SCH_MINUTES_1   SCH_SECONDS_1 * 60
+#define SCH_MINUTES_15  SCH_MINUTES_1 * 15
+#define SCH_MINUTES_30  SCH_MINUTES_15 * 2
+#define SCH_HOURS_1     SCH_MINUTES_30 * 2
+#define SCH_HOURS_12    SCH_HOURS_1 * 12
+#define SCH_DAY_1       SCH_HOURS_12 * 2
 
 /* pointer to a void function with no arguments */
-typedef void ( *task_t ) ( void );
+typedef void ( *task_t )( void );
 
 /**
  * @enum Status of tasks in scheduler
@@ -77,10 +75,11 @@ typedef void ( *task_t ) ( void );
  */
 typedef enum
 {
-    TASK_RUNNABLE = 0,      /**< Task is ready to be ran   */
-    TASK_RUNNING,           /**< Task is currently running */
-    TASK_STOPPED,           /**< Task is stopped           */
-    TASK_ERROR              /**< Error has occurred        */
+    TASK_EMPTY = 0,
+    TASK_STOPPED,       /**< Task is stopped           */
+    TASK_RUNNABLE,      /**< Task is ready to be ran   */
+    TASK_RUNNING,       /**< Task is currently running */
+    TASK_ERROR          /**< Error has occurred        */
 } task_status_e;
 
 
@@ -90,7 +89,7 @@ typedef enum
  *  Initialization only requires a clock parameter.  Clock represents the
  *  time that expires between calles to task_scheduler_clock().
  *
- *  @param uint16_t clock -
+ *  @param uint16_t clock - number of ms scheduler_timer_clock will be called
  *
  *  @code
  *    task_scheduler_init( 1000 ); // 1000 ms between calls
@@ -101,13 +100,6 @@ typedef enum
  */
 void task_scheduler_init( uint16_t clock );
 
-/**
- *  @brief Function called by timer
- *
- *  @pre Clock needs to be initialized
- *
- */
-void task_scheduler_clock( void );
 
 /**
  *  @brief Adds a task to the scheduler
@@ -120,6 +112,7 @@ void task_scheduler_clock( void );
  *
  */
 void task_add( uint8_t id, task_t task, uint32_t period );
+
 
 /**
  *  @brief Deletes task from scheduler
@@ -145,14 +138,21 @@ void task_delete( uint8_t id );
 task_status_e task_get_status( uint8_t id );
 
 /**
- *  @brief Calls Ready Tasks
+ *  @brief Stops the task from running
  *
- *  @pre Scheduler must be initialized first
+ *  @param uint8_t id - id of task
  *
- *  @note
- *   Needs to be called in main while loop
  */
-void task_dispatch( void );
+void task_stop( uint8_t id );
+
+/**
+ *  @brief Resumes the task from a running task
+ *
+ *  @param uint8_t id - id of task
+ *
+ */
+void task_resume( uint8_t id );
+
 
 /**
  *  @brief Starts the task scheduler
@@ -170,5 +170,25 @@ void task_scheduler_start ( void );
  *
  */
 void task_scheduler_stop ( void );
+
+
+/**
+ *  @brief Calls Ready Tasks
+ *
+ *  @pre Scheduler must be initialized first
+ *
+ *  @note
+ *   Needs to be called in main while loop
+ */
+void task_dispatch( void );
+
+
+/**
+ *  @brief Function called by timer
+ *
+ *  @pre Clock needs to be initialized
+ *
+ */
+void task_scheduler_clock( void );
 
 #endif

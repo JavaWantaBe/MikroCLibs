@@ -1,31 +1,5 @@
-/**
- * @file main.c
- *
- * @brief Test for scheduler
- *
- * @author Richard Lowe
- * @copyright AlphaLoewe
- *
- * @date
- *
- * @version <versionNo> - <change_description>
- *
- * @details
- *
- * Status: <XX% completed.>
- *
- * @note
- * Test configuration:
- *   MCU:             %DEVICE%
- *   Dev.Board:       x
- *   Oscillator:      %DEVICE_CLOCK%
- *   Ext. Modules:    x
- *   SW:              %COMPILER%
- *
- * \par
- *   <all that matters>
- */
- 
+/* Demo for scheduler */
+
 #include "scheduler.h"
 
 void initTimer( void );
@@ -35,7 +9,7 @@ void task2( void );
 
 void main()
 {
-    initTimer();
+     initTimer();
     
     #ifdef __MIKROC_PRO_FOR_AVR__
     asm sei;
@@ -48,14 +22,14 @@ void main()
     EnableInterrupts();
     #endif
 
-    UART1_Write_Text("System Startup\n");
+    UART1_Write_Text("System Startup .. ");
     
-    task_scheduler_init( 1000 );
-    task_add( 0, task1, SCH_SECONDS_1 );
+    task_scheduler_init( 100 );
+    task_add( 0, task1, SCH_SECONDS_30 );
     task_add( 1, task2, SCH_SECONDS_5 );
 
     UART1_Write_Text( "Enabling task scheduler\r\n" );
-    Delay_ms( 1000 );
+    
     task_scheduler_start();
 
     while(1) 
@@ -66,12 +40,12 @@ void main()
 
 void task1()
 {
-    UART1_Write_Text("1 Second has passed\n");
+    UART1_Write_Text("30 Seconds has passed\r\n");
 }
 
 void task2()
 {
-    UART1_Write_Text("5 Seconds has passed\n");
+    UART1_Write_Text("5 Seconds has passed\r\n");
 }
 
 
@@ -79,9 +53,9 @@ void initTimer()
 {
     #ifdef __MIKROC_PRO_FOR_AVR__
     TCCR1A = 0x80;
-    TCCR1B = 0x0C;
-    OCR1AH = 0x7A;
-    OCR1AL = 0x12;
+    TCCR1B = 0x0B;
+    OCR1AH = 0x30;
+    OCR1AL = 0xD3;
     OCIE1A_bit = 1;
     #endif
 
@@ -98,13 +72,15 @@ void initTimer()
 
 
 #ifdef __MIKROC_PRO_FOR_AVR__
-void Timer1Overflow_ISR() org IVT_ADDR_TIMER1_COMPA {
+void Timer1Overflow_ISR() org IVT_ADDR_TIMER1_COMPA 
+{
     task_scheduler_clock();
 }
 #endif
 
 #ifdef __MIKROC_PRO_FOR_ARM__
-void Timer2_interrupt() iv IVT_INT_TIM2 {
+void Timer2_interrupt() iv IVT_INT_TIM2 
+{
     TIM2_SR.UIF = 0;
     task_scheduler_clock();
 }
