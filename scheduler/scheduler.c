@@ -60,6 +60,8 @@ void task_add( uint8_t id, task_t task, uint32_t period )
 {
     uint8_t task_id = 0;
     float time_calc = ( ( float )period ) * count_per_ms;
+    
+    if( time_calc < 1 ) time_calc = 1.0f;
 
     while( task_id < MAX_TASKS )
     {
