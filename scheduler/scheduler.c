@@ -56,26 +56,24 @@ void task_scheduler_init( uint16_t clock )
    scans through the list and
    places the new task data where
    it finds free space */
-void task_add( uint8_t id, task_t task, uint32_t period )
+uint8_t task_add( task_t task, uint32_t period )
 {
     uint8_t task_id = 0;
     float time_calc = ( ( float )period ) * count_per_ms;
     
     if( time_calc < 1 ) time_calc = 1.0f;
 
-    while( task_id < MAX_TASKS )
+    for( task_id = 0; task_id < MAX_TASKS; task_id++ )
     {
         if( task_list[task_id].task_status == TASK_EMPTY )
         {
-            task_list[task_id].id          = id;
+            task_list[task_id].id          = task_id;
             task_list[task_id].task        = task;
             task_list[task_id].delay       = ceil( time_calc );
             task_list[task_id].period      = task_list[task_id].delay;
             task_list[task_id].task_status = TASK_RUNNABLE;
             break;
         }
-        
-        task_id++;
     }
 }
 

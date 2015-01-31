@@ -9,7 +9,9 @@ void task2( void );
 
 void main()
 {
-     initTimer();
+    uint8_t task1_id = 0;
+    uint8_t task2_id = 0;
+    initTimer();
     
     #ifdef __MIKROC_PRO_FOR_AVR__
     asm sei;
@@ -25,8 +27,8 @@ void main()
     UART1_Write_Text("System Startup .. ");
     
     task_scheduler_init( 100 );
-    task_add( 0, task1, SCH_SECONDS_30 );
-    task_add( 1, task2, SCH_SECONDS_5 );
+    task1_id = task_add( task1, SCH_SECONDS_30 );
+    task2_id = task_add( task2, SCH_SECONDS_5 );
 
     UART1_Write_Text( "Enabling task scheduler\r\n" );
     

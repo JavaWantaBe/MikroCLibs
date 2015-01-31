@@ -106,12 +106,12 @@ void task_scheduler_init( uint16_t clock );
  *
  *  @pre Scheduler must be initialized first
  *
- *  @param uint8_t id - ID of task, must be unique
  *  @param task_t task- Function that will be called when scheduler executes
  *  @param uint32_t period - how many nx100ms of delay the task requires
  *
+ *  @returns uint8_t - id of created task
  */
-void task_add( uint8_t id, task_t task, uint32_t period );
+uint8_t task_add( task_t task, uint32_t period );
 
 
 /**
