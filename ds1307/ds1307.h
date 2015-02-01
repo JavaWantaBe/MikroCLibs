@@ -60,26 +60,11 @@
 #define MODE12HOUR 1
 #define MODE24HOUR 2
 
-#define JANUARY   0x01
-#define FEBUARY   0x02
-#define MARCH     0x03
-#define APRIL     0x04
-#define MAY       0x05
-#define JUNE      0x06
-#define JULY      0x07
-#define AUGUST    0x08
-#define SEPTEMBER 0x09
-#define OCTOBER   0x0A
-#define NOVEMBER  0x0B
-#define DECEMBER  0x0C
 
-#define MONDAY    0x01
-#define TUESDAY   0x02
-#define WEDNESDAY 0x03
-#define THURSDAY  0x04
-#define FRIDAY    0x05
-#define SATURDAY  0x06
-#define SUNDAY    0x07
+#define RAM_START 0x08
+#define RAM_END   0x3F
+#define RAM_SIZE  56
+
 
 /**
  * @brief RTC Modes
@@ -88,7 +73,7 @@
 #define DS1307_SQW_1HZ        0x10
 #define DS1307_SQW_4KHZ       0x11
 #define DS1307_SQW_8KHZ       0x12
-#define DS1307_SQW_32.768KHZ  0x13
+#define DS1307_SQW_32_768KHZ  0x13
 #define DS1307_TGL_OUT        0x80
 
 
@@ -168,7 +153,7 @@ void ds1307_set_time_local_ts( TimeStruct* set_time );
  *  @returns TimeStruct* : Pointer to timestruct
  *
  */
-TimeStruct* ds1307_get_GMT_time( void );
+void ds1307_get_GMT_time( TimeStruct* ts );
 
 /**
  *  @brief Get Local time
@@ -177,7 +162,7 @@ TimeStruct* ds1307_get_GMT_time( void );
  *
  *  @returns TimeStruct* : Pointer to timestruct
  */
-TimeStruct* ds1307_get_local_time( void );
+void ds1307_get_local_time( TimeStruct* ts );
 
 /**
  *  @brief Get GMT Time in unix timestamp form
@@ -276,16 +261,6 @@ uint8_t ds1307_read_ram( uint8_t addr );
  *
  */
 void ds1307_read_ram_bulk( void* read_data, uint8_t size );
-
-/**
- *  @brief Read address
- *
- *  @param uint8_t address - address of value stored in DS1307
- *
- *  @returns uint8_t - 1 byte value read from passed address
- *
- */
-uint8_t ds1307_read_address( uint8_t address );
 
 /**
  *  @brief Get http get http gmt string

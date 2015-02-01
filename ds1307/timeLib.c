@@ -45,15 +45,15 @@ void setup_rtc()
 
     ds1307_init( &rtc );
 
-    /*
-    ts1.yy = 2014;
-    ts1.mo = 1;
-    ts1.md = 26;
-    ts1.hh = 17;
-    ts1.mn = 49;
+
+    ts1.yy = 2015;
+    ts1.mo = 2;
+    ts1.md = 1;
+    ts1.hh = 21;
+    ts1.mn = 42;
 
     ds1307_set_time_GMT_ts( &ts1 );
-    */
+
 }
 
 
@@ -74,9 +74,9 @@ void main()
      {
        Lcd_Out( 1, 1, ds1307_get_local_time_str( MODE24HOUR ) );
        Lcd_Out( 2, 1, ds1307_get_http_gmt_str() );
-       msg( "Local Time: " );
-       msg( ds1307_get_local_time_str( MODE24HOUR ) );
-       msg( "\r\n" );
+       //msg( "Local Time: " );
+       //msg( ds1307_get_local_time_str( MODE24HOUR ) );
+       //msg( "\r\n" );
        msg( "GMT Time: " );
        msg( ds1307_get_GMT_time_str( MODE24HOUR ) );
        msg( "\r\n" );
