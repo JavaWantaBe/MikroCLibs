@@ -1,5 +1,4 @@
 #include "ds1307.h"
-#include <stdbool.h>
 #include <stddef.h>
 
 #define msg( txt ) UART1_Write_Text( txt )
@@ -32,10 +31,10 @@ void setup_rtc()
     TimeStruct ts1;
     
     ds1307_config_t rtc;
-    rtc.time_zone = -8;
-    rtc.dst_enable = true;
-    rtc.output_config = DS1307_SQW_1HZ;
-    rtc.mode_24hour = true;
+    rtc.time_zone     = -8;
+    rtc.dst_enable    = 1;
+    rtc.output_mode   = DS1307_SQW_1HZ;
+    rtc.hour24_enable = 1;
 
     UART1_Init( 38400 );
     Delay_ms( 100 );

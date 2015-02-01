@@ -48,8 +48,7 @@
 #define _DS1307_H
 
 #include <stdint.h>
-#include <stdbool.h>
-#include <time.h>
+#include "timelib.h"
 
 #define DS1307_TWI_INTERFACE
 //#define DS1307_I2C_INTERFACE
@@ -92,16 +91,17 @@
 #define DS1307_SQW_32.768KHZ  0x13
 #define DS1307_TGL_OUT        0x80
 
+
 /**
  *  @struct holds rtc config
  *
  */
 typedef struct
 {
-    int8_t time_zone;         /**< Local time zone                         */
-    bool dst_enable;          /**< Enable or disable daylight savings time */
-    uint8_t output_config;    // Configuration for output pin
-    bool mode_24hour;         // Keep time in 24 or 12 hour modes
+    int8_t  time_zone;         /**< Local time zone                         */
+    uint8_t dst_enable;       /**< Enable or disable daylight savings time */
+    uint8_t output_mode;    // Configuration for output pin
+    uint8_t hour24_enable;    // Keep time in 24 or 12 hour modes
 } ds1307_config_t;
 
 

@@ -54,10 +54,10 @@ static const code uint8_t* months_year[] =
 
 static TimeStruct time_GMT, time_local, dst_time_start, dst_time_stop;
 static uint32_t last_time_set;
-static int8_t local_time_zone;
-static bool dst_enable;
-static bool mode_24hour;
-static bool PM;  // AM == false PM == true;
+static uint8_t PM;  // AM == false PM == true;
+
+// Holds active config
+static ds1307_config_t active_config;
 
 
 /****************************************
@@ -69,11 +69,7 @@ static void ds1307_set_dst( uint16_t year );
 // write config to ram
 static void ds1307_write_configuration( uint8_t cfg )
 {
-
-    if( cfg & 0x6C )
-    {
-        return;
-    }
+    if( cfg & 0x6C ) return;
 
     #ifdef DS1307_TWI_INTERFACE
     TWI_Start();
@@ -85,7 +81,6 @@ static void ds1307_write_configuration( uint8_t cfg )
 
     #ifdef DS1307_I2C_INTERFACE
     I2C_Start();
-
     #endif
 }
 
@@ -118,24 +113,19 @@ static void ds1307_set_dst( uint16_t year )
 /****************************************
  *  Functions
  ***************************************/
-
-
+// Initialization
 void ds1307_init( ds1307_config_t* rtc_config )
 {
-
     if( rtc_config->time_zone >= -16 && rtc_config->time_zone <= 16 )
     {
-        char config = 0;
-        char hours = 0;
+        char config = 0, hours = 0;
 
         #ifdef DS1307_I2C_INTERFACE
         char write_buffer[2] = {0};
         #endif
         
         // Set globals
-        local_time_zone = rtc_config->time_zone;
-        dst_enable      = rtc_config->dst_enable;
-        mode_24hour     = rtc_config->mode_24hour;
+        memcpy( &active_config, rtc_config, sizeof( ds1307_config_t ) );
 
         #ifdef DS1307_TWI_INTERFACE
         TWI_Start();
@@ -176,7 +166,7 @@ void ds1307_init( ds1307_config_t* rtc_config )
           This checks the 24 hour bit is set and the mode is set to 12 hour
           setting will change.
         */
-        if( hours & ( 1 << DS1307_24_12_BIT ) && mode_24hour == false )
+        if( hours & ( 1 << DS1307_24_12_BIT ) && !active_config.hour24_enable )
         {
             TWI_Start();
             TWI_Write( DS1307_WRITE );
@@ -185,7 +175,7 @@ void ds1307_init( ds1307_config_t* rtc_config )
             TWI_Write( hours );
             TWI_Stop();
         } 
-        else if( !( hours & ( 1 << DS1307_24_12_BIT ) ) && mode_24hour == true )
+        else if( !( hours & ( 1 << DS1307_24_12_BIT ) ) && active_config.hour24_enable )
         {
             TWI_Start();
             TWI_Write( DS1307_WRITE );
@@ -198,10 +188,10 @@ void ds1307_init( ds1307_config_t* rtc_config )
         #endif
 
         #ifdef DS1307_I2C_INTERFACE
-
+        // ARM Features here
         #endif
 
-        if( dst_enable == true )
+        if( active_config.dst_enable )
         {
             uint16_t year = 0;
             
@@ -216,9 +206,9 @@ void ds1307_init( ds1307_config_t* rtc_config )
             ds1307_set_dst( year );
         }
         
-        if( rtc_config->output_config != 0 )
+        if( active_config.output_mode != 0 )
         {
-            ds1307_write_configuration( rtc_config->output_config );
+            ds1307_write_configuration( active_config.output_mode );
         }
     }
 }
@@ -240,7 +230,7 @@ void ds1307_set_time_GMT_ts( TimeStruct* set_time )
     TWI_Write( ( Dec2Bcd( set_time->ss ) & SECONDS ) );
     TWI_Write( ( Dec2Bcd( set_time->mn ) & MINUTES ) );
     
-    if( mode_24hour == true )
+    if( active_config.hour24_enable )
     {
         TWI_Write( ( Dec2Bcd ( set_time->hh ) & HOURS ) );
     }
@@ -336,7 +326,7 @@ TimeStruct* ds1307_get_GMT_time()
     time_GMT.ss = ( uint8_t )Bcd2Dec( ( TWI_Read( DS1307_ACK ) & SECONDS ) );
     time_GMT.mn = ( uint8_t )Bcd2Dec( ( TWI_Read( DS1307_ACK ) & MINUTES ) );
     
-    if( mode_24hour == true )
+    if( active_config.hour24_enable )
     {
         time_GMT.hh = ( uint8_t )Bcd2Dec( ( TWI_Read( DS1307_ACK ) & HOURS ) );
     }
@@ -396,9 +386,9 @@ TimeStruct* ds1307_get_local_time()
     // Holds GMT time in timestamp
     uint32_t rtc_time = ds1307_get_GMT_unix_time();
 
-    if( dst_enable == true )
+    if( active_config.dst_enable )
     {
-        int8_t new_time_zone = local_time_zone;
+        int8_t new_time_zone = active_config.local_time_zone;
         
         if( time_local.mo >= MARCH && time_local.mo <= NOVEMBER )
         {
@@ -771,14 +761,14 @@ char* ds1307_get_http_gmt_str()
 
     ts1 = ds1307_get_GMT_time();
 
-    gmt_str[0] = days_week[ts1->wd][0];
-    gmt_str[1] = days_week[ts1->wd][1];
-    gmt_str[2] = days_week[ts1->wd][2];
-    gmt_str[3] = ',';
-    gmt_str[4] = ' ';
-    gmt_str[5] = ( ts1->md / 10 ) + 48;
-    gmt_str[6] = ( ts1->md % 10 ) + 48;
-    gmt_str[7] = ' ';
+    gmt_str[0]  = days_week[ts1->wd][0];
+    gmt_str[1]  = days_week[ts1->wd][1];
+    gmt_str[2]  = days_week[ts1->wd][2];
+    gmt_str[3]  = ',';
+    gmt_str[4]  = ' ';
+    gmt_str[5]  = ( ts1->md / 10 ) + 48;
+    gmt_str[6]  = ( ts1->md % 10 ) + 48;
+    gmt_str[7]  = ' ';
     gmt_str[8]  = months_year[ts1->mo][0];
     gmt_str[9]  = months_year[ts1->mo][1];
     gmt_str[10] = months_year[ts1->mo][2];

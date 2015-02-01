@@ -25,15 +25,15 @@
  * simple time structure
  */
 typedef struct
-{
-     unsigned char   ss ;    // seconds
-     unsigned char   mn ;    // minutes
-     unsigned char   hh ;    // hours
-     unsigned char   md ;    // day in month, from 1 to 31
-     unsigned char   wd ;    // day in week, monday=0, tuesday=1, .... sunday=6
-     unsigned char   mo ;    // month number, from 1 to 12 (and not from 0 to 11 as with unix C time !)
-     unsigned int    yy ;    // year Y2K compliant, from 1892 to 2038
-} TimeStruct ;
+        {
+        unsigned char   ss ;    // seconds
+        unsigned char   mn ;    // minutes
+        unsigned char   hh ;    // hours
+        unsigned char   md ;    // day in month, from 1 to 31
+        unsigned char   wd ;    // day in week, monday=0, tuesday=1, .... sunday=6
+        unsigned char   mo ;    // month number, from 1 to 12 (and not from 0 to 11 as with unix C time !)
+        unsigned int    yy ;    // year Y2K compliant, from 1892 to 2038
+        } TimeStruct ;
 
 /*
  * private variables
