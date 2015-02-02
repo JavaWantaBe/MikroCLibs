@@ -283,8 +283,7 @@ void ds1307_set_time_GMT_ts( TimeStruct* set_time )
 {
     TimeStruct time;
 
-    // When high, the 12-hour mode is selected.
-    if( rtc_read( DS1307_HOURS_ADDR ) & ( 1 << DS1307_24_12_BIT ) )
+    if( !hour24_enable )
     {
         // bit 5 is the AM/PM bit with logic high being PM
         if( set_time->hh >= 12 )
@@ -319,7 +318,7 @@ void ds1307_set_time_GMT_ts( TimeStruct* set_time )
     time.wd = ( Dec2Bcd( set_time->wd ) & DAY ) + 1;
     time.md = Dec2Bcd( set_time->md ) & DATE;
     time.mn = Dec2Bcd( set_time->mo ) & MONTH;
-    time.yy = (uint16_t)Dec2Bcd( ( uint8_t )set_time->yy - 2000 ) & YEAR;
+    time.yy = ( uint16_t )Dec2Bcd( ( uint8_t )set_time->yy - 2000 ) & YEAR;
     
     rtc_write_time( &time );
 }
@@ -332,7 +331,7 @@ void ds1307_get_GMT_time( TimeStruct* ts )
     rtc_read_time( &time );
 
     // When high, the 12-hour mode is selected.
-    if( rtc_read( DS1307_HOURS_ADDR ) & ( 1 << DS1307_24_12_BIT ) )
+    if( !hour24_enable )
     {
         if( rtc_read( DS1307_HOURS_ADDR ) & ( 1 << DS1307_AMPM_BIT ) )
         {
@@ -527,7 +526,6 @@ char* ds1307_get_GMT_time_str( int mode )
         formated_gmt_time[0] = ( x / 10 ) + 48;
         formated_gmt_time[1] = ( x % 10 ) + 48;
     }
-
     else
     {
         formated_gmt_time[0] = ( tmp_time.hh / 10 ) + 48;

@@ -27,10 +27,9 @@ Count=0
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=3
+Count=2
 File0=timeLib.c
 File1=ds1307.c
-File2=timeLib.lst
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
