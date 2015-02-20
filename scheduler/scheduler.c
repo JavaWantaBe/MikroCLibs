@@ -72,9 +72,11 @@ uint8_t task_add( task_t task, uint32_t period )
             task_list[task_id].delay       = ceil( time_calc );
             task_list[task_id].period      = task_list[task_id].delay;
             task_list[task_id].task_status = TASK_RUNNABLE;
-            break;
+            return task_id;
         }
     }
+
+    return TASK_ERROR;
 }
 
 // remove task from task list

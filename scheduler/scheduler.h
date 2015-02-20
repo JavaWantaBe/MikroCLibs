@@ -29,11 +29,11 @@
  * @code
  *  void main()
  *  {
- *      initTimer();
+ *      initTimer();  // Initialize timer
  *
  *      task_scheduler_init( 1000 );
- *      task_add( 0, task1, SCH_SECONDS_1 );
- *      task_add( 1, task2, SCH_SECONDS_5 );
+ *      task_add( task1, SCH_SECONDS_1 );
+ *      task_add( task2, SCH_SECONDS_5 );
  *
  *      task_scheduler_start();
  *
@@ -41,6 +41,8 @@
  *      {
  *          task_dispatch();
  *      }
+ *   }
+ *   ... Call task_scheduler_clock() in ISR
  *
  *  #endcode
  *
