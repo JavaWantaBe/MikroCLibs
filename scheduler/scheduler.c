@@ -6,19 +6,17 @@ typedef struct
 {
     uint8_t   id;                // task ID
     task_t    task;              // pointer to the task
-    uint32_t  delay;             // delay before execution
+    volatile uint32_t  delay;             // delay before execution
     uint32_t  period;
     task_status_e task_status;   // status of task
 } task_control_t;
 
 // Array of tasks
 static task_control_t task_list[MAX_TASKS];
-// counter in clock
-static volatile uint16_t count;
 // used to calculate delay based on user input
 static float count_per_ms;
 // flag for enabling / disabling scheduler
-static volatile uint8_t task_scheduler_running;
+static uint8_t task_scheduler_running;
 
 /*******************
  *  Private
@@ -45,9 +43,9 @@ static task_control_t* find_task( uint8_t id )
 // initialises the task list
 void task_scheduler_init( uint16_t clock )
 {
-    //task_scheduler_running = 0;
+    task_scheduler_running = 0;
     // Should be set to zero since array is a global
-    //memset( task_list, 0, sizeof( task_list ) );
+    memset( task_list, 0, sizeof( task_list ) );
     
     count_per_ms = 1.0f / ( float )clock;
 }
@@ -67,15 +65,16 @@ uint8_t task_add( task_t task, uint32_t period )
     {
         if( task_list[task_id].task_status == TASK_EMPTY )
         {
-            task_list[task_id].id          = task_id;
+            task_list[task_id].task_status = TASK_RUNNABLE;
+            task_list[task_id].id          = task_id + 1;
             task_list[task_id].task        = task;
             task_list[task_id].delay       = ceil( time_calc );
             task_list[task_id].period      = task_list[task_id].delay;
-            task_list[task_id].task_status = TASK_RUNNABLE;
-            return task_id;
+
+            return task_list[task_id].id;
         }
     }
-
+    
     return TASK_ERROR;
 }
 

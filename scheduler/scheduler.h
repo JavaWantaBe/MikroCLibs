@@ -81,7 +81,7 @@ typedef enum
     TASK_STOPPED,       /**< Task is stopped           */
     TASK_RUNNABLE,      /**< Task is ready to be ran   */
     TASK_RUNNING,       /**< Task is currently running */
-    TASK_ERROR          /**< Error has occurred        */
+    TASK_ERROR = 99     /**< Error has occurred        */
 } task_status_e;
 
 
