@@ -124,6 +124,7 @@ uint8_t task_add( task_t task, uint32_t period );
  */
 void task_delete( uint8_t id );
 
+
 /**
  *  @brief Get Task Status
  *
@@ -139,6 +140,7 @@ void task_delete( uint8_t id );
  */
 task_status_e task_get_status( uint8_t id );
 
+
 /**
  *  @brief Stops the task from running
  *
@@ -146,6 +148,7 @@ task_status_e task_get_status( uint8_t id );
  *
  */
 void task_stop( uint8_t id );
+
 
 /**
  *  @brief Resumes the task from a running task
@@ -165,6 +168,7 @@ void task_resume( uint8_t id );
  */
 void task_scheduler_start ( void );
 
+
 /**
  *  @brief Stops the task scheduler
  *
@@ -183,6 +187,14 @@ void task_scheduler_stop ( void );
  *   Needs to be called in main while loop
  */
 void task_dispatch( void );
+
+
+/**
+ *  @brief Returns the number of tasks in scheduler
+ *
+ *  @return - uint8_t
+ */
+uint8_t task_get_count( void );
 
 
 /**

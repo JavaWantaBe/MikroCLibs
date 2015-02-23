@@ -45,10 +45,11 @@ void task_scheduler_init( uint16_t clock )
 {
     task_scheduler_running = 0;
     // Should be set to zero since array is a global
-    memset( task_list, 0, sizeof( task_list ) );
+    // memset( task_list, 0, sizeof( task_list ) );
     
     count_per_ms = 1.0f / ( float )clock;
 }
+
 
 /* adds a new task to the task list
    scans through the list and
@@ -154,6 +155,19 @@ void task_dispatch()
     }
 }
 
+// Get the number of tasks in scheduler
+uint8_t task_get_count()
+{
+    uint8_t i, count = 0;
+    
+    for( i = 0; i < MAX_TASKS; i++ )
+    {
+        if( task_list[i].task_status == TASK_EMPTY )
+            count++;
+    }
+    
+    return count;
+}
 
 // clock
 void task_scheduler_clock()

@@ -8,7 +8,7 @@ Value=0
 [BOOT_TYPE]
 Value=1
 [ACTIVE_TAB]
-Value=scheduler.c
+Value=main.c
 [USE_EEPROM]
 Value=0
 [USE_HEAP]
@@ -52,10 +52,9 @@ File0=scheduler.h
 [PLDS]
 Count=0
 [Useses]
-Count=3
+Count=2
 File0=UART
 File1=C_Math
-File2=C_String
 [EXPANDED NODES]
 Node1=Sources
 Node2=Header Files
