@@ -1,17 +1,4 @@
-/* Copyright (c) 2007 Nordic Semiconductor. All Rights Reserved.
- *
- * The information contained herein is property of Nordic Semiconductor ASA.
- * Terms and conditions of usage are described in detail in NORDIC
- * SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT.
- *
- * Licensees are granted free, non-transferable use of the information. NO
- * WARRENTY of ANY KIND is provided. This heading must NOT be removed from
- * the file.
- *
- * $LastChangedRevision: 2132 $
- */
-
-/** 
+/**
  * @file hal_nrf.h
  *
  * Interface for nRF HAL
@@ -42,6 +29,8 @@
  * This function only changes state for selected
  * int_type, the rest of the interrupt sources
  * are left unchanged.
+ *
+ * @note By default all three interrupts are enabled
  *
  * @param hal_nrf_irq_source_t - int_source Radio interrupt Source.
  * @param bool - irq_state Enable or Disable.
@@ -337,28 +326,36 @@ uint8_t hal_nrf_get_rx_pload_width( uint8_t pipe_num );
 */
 void hal_nrf_set_operation_mode( hal_nrf_operation_mode_t op_mode );
 
-/** Set radio's power mode.
+/** 
+ * @brief Set radio's power mode.
+ *
  * Use this function to power_up or power_down radio.
  *
  * @param pwr_mode POWER_UP or POWER_DOWN
 */
 void hal_nrf_set_power_mode( hal_nrf_pwr_mode_t pwr_mode );
 
-/** Set radio's RF channel.
+/** 
+ * @brief Set radio's RF channel.
+ *
  * Use this function to select which RF channel to use.
  *
  * @param channel RF channel
 */
 void hal_nrf_set_rf_channel( uint8_t channel );
 
-/** Set radio's TX output power.
+/** 
+ * @brief Set radio's TX output power.
+ *
  * Use this function set the radio's TX output power.
  *
  * @param power Radio's TX output power
 */
 void hal_nrf_set_output_power( hal_nrf_output_power_t power );
 
-/** Set radio's on-air datarate.
+/** 
+ * @brief Set radio's on-air datarate.
+ *
  * Use this function to select radio's on-air
  * datarate.
  *
@@ -366,7 +363,9 @@ void hal_nrf_set_output_power( hal_nrf_output_power_t power );
 */
 void hal_nrf_set_datarate( hal_nrf_datarate_t datarate );
 
-/** Get radio's current operation mode.
+/** 
+ * @brief Get radio's current operation mode.
+ *
  * Use this function to get the radio's current
  * operation mode, PTX or PRX.
  *
@@ -376,7 +375,9 @@ void hal_nrf_set_datarate( hal_nrf_datarate_t datarate );
 */
 uint8_t hal_nrf_get_operation_mode( void );
 
-/** Get radio's current power mode.
+/** 
+ * @brief Get radio's current power mode.
+ *
  * Use this function to get the radio's currnet
  * power mode, POWER_UP or POWER_DOWN.
  *
@@ -386,7 +387,9 @@ uint8_t hal_nrf_get_operation_mode( void );
 */
 uint8_t hal_nrf_get_power_mode( void );
 
-/** Get radio's current RF channel.
+/** 
+ * @brief Get radio's current RF channel.
+ *
  * Use this function to get the radio's current
  * selected RF channel
  *
@@ -394,7 +397,9 @@ uint8_t hal_nrf_get_power_mode( void );
 */
 uint8_t hal_nrf_get_rf_channel( void );
 
-/** Get radio's current TX output power.
+/** 
+ * @brief Get radio's current TX output power.
+ *
  * Use this function to get the radio's current
  * TX output power setting.
  *
@@ -403,22 +408,26 @@ uint8_t hal_nrf_get_rf_channel( void );
  * @retval 0x01 -12dBm
  * @retval 0x02 -6dBm
  * @retval 0x03 0dBm
-*/
+ */
 uint8_t hal_nrf_get_output_power( void );
 
-/** Get radio's current on-air datarate.
+/** 
+ * @brief Get radio's current on-air datarate.
+ *
  * Use this function to get the radio's current
  * on-air datarate setting.
  *
  * @return On-air datarate
  * @retval 0x00 1Mbps selected
  * @retval 0x01 2Mbps selected
-*/
+ */
 uint8_t hal_nrf_get_datarate( void );
 
 /* Status functions prototypes */
 
-/** Get radio's TX FIFO status.
+/** 
+ * @brief Get radio's TX FIFO status.
+ *
  * Use this function to get the radio's TX
  * FIFO status.
  *
@@ -430,7 +439,9 @@ uint8_t hal_nrf_get_datarate( void );
 */
 uint8_t hal_nrf_get_tx_fifo_status( void );
 
-/** Check for TX FIFO empty.
+/** 
+ * @brief Check for TX FIFO empty.
+ *
  * Use this function to check if TX FIFO
  * is empty.
  *
@@ -438,10 +449,12 @@ uint8_t hal_nrf_get_tx_fifo_status( void );
  * @retval FALSE TX FIFO NOT empty
  * @retval TRUE TX FIFO empty
  *
-*/
+ */
 bool hal_nrf_tx_fifo_empty( void );
 
-/** Check for TX FIFO full.
+/** 
+ * @brief Check for TX FIFO full.
+ *
  * Use this function to check if TX FIFO
  * is full.
  *
@@ -452,7 +465,9 @@ bool hal_nrf_tx_fifo_empty( void );
 */
 bool hal_nrf_tx_fifo_full( void );
 
-/** Get radio's RX FIFO status.
+/** 
+ * @brief Get radio's RX FIFO status.
+ *
  * Use this function to get the radio's TX
  * FIFO status.
  *
@@ -461,10 +476,12 @@ bool hal_nrf_tx_fifo_full( void );
  * @retval 0x01 RX FIFO empty
  * @retval 0x02 RX FIFO full
  *
-*/
+ */
 uint8_t hal_nrf_get_rx_fifo_status( void );
 
-/** Check for RX FIFO empty.
+/** 
+ * @brief Check for RX FIFO empty.
+ *
  * Use this function to check if RX FIFO
  * is empty.
  *
@@ -474,10 +491,12 @@ uint8_t hal_nrf_get_rx_fifo_status( void );
  * @retval FALSE RX FIFO NOT empty
  * @retval TRUE RX FIFO empty
  *
-*/
+ */
 bool hal_nrf_rx_fifo_empty( void );
 
-/** Check for RX FIFO full.
+/** 
+ * @brief Check for RX FIFO full.
+ *
  * Use this function to check if RX FIFO
  * is full.
  *
@@ -485,18 +504,22 @@ bool hal_nrf_rx_fifo_empty( void );
  * @retval FALSE RX FIFO NOT full
  * @retval TRUE RX FIFO full
  *
-*/
+ */
 bool hal_nrf_rx_fifo_full( void );
 
-/** Get radio's transmit attempts status.
+/** 
+ * @brief Get radio's transmit attempts status.
+ *
  * Use this function to get number of retransmit
  * attempts and number of packet lost.
  *
  * @return Retransmit attempts counters
-*/
+ */
 uint8_t hal_nrf_get_transmit_attempts( void );
 
-/** Get the carrier detect flag.
+/** 
+ * @brief Get the carrier detect flag.
+ *
  * Use this function to get the carrier detect flag,
  * used to detect stationary disturbance on selected
  * RF channel.
@@ -504,12 +527,14 @@ uint8_t hal_nrf_get_transmit_attempts( void );
  * @return Carrier Detect
  * @retval FALSE Carrier NOT Detected
  * @retval TRUE Carrier Detected
-*/
+ */
 bool hal_nrf_get_carrier_detect( void );
 
 /* Data operation prototypes */
 
-/** Get RX data source.
+/** 
+ * @brief Get RX data source.
+ *
  * Use this function to read which RX pipe data
  * was received on for current top level FIFO data packet.
  *
@@ -517,7 +542,9 @@ bool hal_nrf_get_carrier_detect( void );
 */
 uint8_t hal_nrf_get_rx_data_source( void );
 
-/** Read RX payload.
+/** 
+ * @brief Read RX payload.
+ *
  * Use this function to read top level payload
  * available in the RX FIFO.
  *
@@ -526,48 +553,60 @@ uint8_t hal_nrf_get_rx_data_source( void );
 */
 uint16_t hal_nrf_read_rx_pload( uint8_t* rx_pload );
 
-/** Write TX payload to radio.
+/** 
+ * @brief Write TX payload to radio.
+ *
  * Use this function to write a packet of
  * TX payload into the radio.
  * <I>length</I> number of bytes, which are stored in <I>*tx_pload</I>.
  *
  * @param *tx_pload pointer to buffer in which TX payload are present
  * @param length number of bytes to write
-*/
+ */
 void hal_nrf_write_tx_pload( uint8_t* tx_pload, uint8_t length );
 
-/** Reuse TX payload.
+/** 
+ * @brief Reuse TX payload.
+ *
  * Use this function to set that the radio is using
  * the last transmitted payload for the next packet as well.
  *
-*/
+ */
 void hal_nrf_reuse_tx( void );
 
-/** Get status of reuse TX function.
+/** 
+ * @brief Get status of reuse TX function.
+ *
  * Use this function to check if reuse TX payload is
  * activated
  *
  * @return Reuse TX payload mode
  * @retval FALSE Not activated
  * @retval TRUE Activated
-*/
+ */
 bool hal_nrf_get_reuse_tx_status( void );
 
-/** Flush RX FIFO.
+/** 
+ * @brief Flush RX FIFO.
+ *
  * Use this function to flush the radio's
  * RX FIFO.
  *
-*/
+ */
 void hal_nrf_flush_rx( void );
 
-/** Flush TX FIFO.
+/** 
+ * @brief Flush TX FIFO.
+ *
  * Use this function to flush the radio's
  * TX FIFO.
  *
-*/
+ */
 void hal_nrf_flush_tx( void );
 
-/** No Operation command.
+/** 
+ * @brief No Operation command.
+ *
  * Use this function to receive the radio's
  * status register.
  *
@@ -580,38 +619,46 @@ uint8_t hal_nrf_nop( void );
 //@{
 /* Test functions prototypes */
 
-/** Set radio's PLL mode.
+/** 
+ * @brief Set radio's PLL mode.
+ *
  * Use this function to either LOCK
  * or UNLOCK the radio's PLL.
  *
  * @param pll_mode PLL locked, TRUE or FALSE
-*/
+ */
 void hal_nrf_set_pll_mode( hal_nrf_pll_mode_t pll_mode );
 
-/** Get PLL mode.
+/** 
+ * @brief Get PLL mode.
+ 
  * Use this function to get the radio's
  * current PLL mode.
  *
  * @return PLL_mode
-*/
+ */
 hal_nrf_pll_mode_t hal_nrf_get_pll_mode( void );
 
-/** Set radio's LNA gain mode.
+/** 
+ * @brief Set radio's LNA gain mode.
+ *
  * Use this function to either use HI
  * current or LOW current mode for the radio.
  *
  * @param lna_gain LNA gain mode
-*/
+ */
 void hal_nrf_set_lna_gain( hal_nrf_lna_mode_t lna_gain );
 
-/** Get LNA gain mode.
+/** 
+ * @brief Get LNA gain mode.
+ *
  * Use this function to get the radio's
  * current LNA gain mode.
  *
  * @return LNA gain mode
  * @retval 0 LNA LOW current
  * @retval 1 LNA HI current
-*/
+ */
 hal_nrf_lna_mode_t hal_nrf_get_lna_gain( void );
 
 /* hal_nrf_l01 basic functions, used by all the other functions */
@@ -623,7 +670,9 @@ hal_nrf_lna_mode_t hal_nrf_get_lna_gain( void );
 /* hal_nrf_l01 basic functions, used by all the other functions */
 
 
-/* Basis function read_reg.
+/**
+ * @brief Basis function read_reg.
+ *
  * Use this function to read the contents
  * of one radios register.
  *
@@ -632,7 +681,9 @@ hal_nrf_lna_mode_t hal_nrf_get_lna_gain( void );
  */
 uint8_t hal_nrf_read_reg( uint8_t reg );
 
-/* Basis function write_reg.
+/**
+ * @brief Basis function write_reg.
+ *
  * Use this function to write a new value to
  * a radio register.
  *
@@ -642,7 +693,9 @@ uint8_t hal_nrf_read_reg( uint8_t reg );
  */
 uint8_t hal_nrf_write_reg( uint8_t reg, uint8_t value );
 
-/* Basis function, read_multibyte register .
+/**
+ * @brief Basis function, read_multibyte register.
+ *
  * Use this function to read multiple bytes from
  * a multibyte radio-register
  *
@@ -655,7 +708,9 @@ uint8_t hal_nrf_write_reg( uint8_t reg, uint8_t value );
  */
 uint16_t hal_nrf_read_multibyte_reg( uint8_t reg, uint8_t* pbuf );
 
-/* Basis function, write_multibyte register.
+/**
+ * @brief Basis function, write_multibyte register.
+ *
  * Use this function to write multiple bytes to
  * a multiple radio register.
  *
@@ -665,7 +720,9 @@ uint16_t hal_nrf_read_multibyte_reg( uint8_t reg, uint8_t* pbuf );
  */
 void hal_nrf_write_multibyte_reg( uint8_t reg, uint8_t* pbuf, uint8_t length );
 
-/** Basis function, nrf_rw
+/** 
+ * @brief Basis function, nrf_rw
+ *
  * This function is used by the basis functions
  * to exchange data with the data.
  *

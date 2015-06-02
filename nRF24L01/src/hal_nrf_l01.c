@@ -14,7 +14,7 @@
 /**
  * @file hal_nrf_l01.c
  *
- * @author Runar Kjellhaug Modified by Richard Lowe
+ * @author Runar Kjellhaug Modified by Richard Lowe for MikroC compatibility
  *
  */
 
